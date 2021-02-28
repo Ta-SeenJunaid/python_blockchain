@@ -1,4 +1,5 @@
 import time
+from crypto_hash import crypto_hash
 
 class Block:
     def __init__(self, timestamp, previous_hash, hash, data):
@@ -21,7 +22,7 @@ class Block:
     def mine_block(previous_block, data):
         timestamp = time.time_ns()
         previous_hash = previous_block.hash
-        hash = f'{timestamp}-{previous_hash}'
+        hash = crypto_hash(timestamp, previous_hash, data)
         return Block(timestamp, previous_hash, hash, data)
 
     @staticmethod
