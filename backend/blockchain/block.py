@@ -63,11 +63,33 @@ class Block:
     def genesis():
         return Block(**GENESIS_DATA)
 
+    @staticmethod
+    def is_valid_block(previous_block, block):
+
+        if block.previous_hash != previous_block.hash:
+            raise Exception('The block last hash must be correct')
+        if hex_to_binary(block.hash)[0 : block.difficulty ] != '0'*block.difficulty:
+            raise Exception('The proof of work requirments was not met')
+        if abs(previous_block.difficulty - block.difficulty) > 1:
+            raise Exception('The block difficulty must only adjust by 1')
+        reconstructed_hash = crypto_hash(block.timestamp, block.previous_hash,
+                                         block.data, block.nonce, block.difficulty)
+        if block.hash != reconstructed_hash:
+            raise Exception('The block hash must be correct')
+
 def main():
     genesis_block = Block.genesis()
     block = Block.mine_block(genesis_block, "Our data")
     print(block)
     print(f'block.py __name__: {__name__}')
+
+    tempered_block = block
+    tempered_block.previous_hash = "tempered_hash"
+
+    try:
+        Block.is_valid_block(genesis_block, tempered_block)
+    except Exception as e:
+        print(f'is_valid_block: {e}')
 
 if __name__ == '__main__':
     main()
