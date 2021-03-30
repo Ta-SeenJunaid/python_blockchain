@@ -11,6 +11,8 @@ GENESIS_DATA = {
     'difficulty' : 3,
     'nonce': 'genesis_nonce'
 }
+
+
 class Block:
     def __init__(self, timestamp, previous_hash, hash, data, difficulty, nonce):
         self.timestamp = timestamp
@@ -76,6 +78,7 @@ class Block:
                                          block.data, block.nonce, block.difficulty)
         if block.hash != reconstructed_hash:
             raise Exception('The block hash must be correct')
+
 
 def main():
     genesis_block = Block.genesis()
