@@ -3,13 +3,14 @@ from backend.util.crypto_hash import crypto_hash
 from backend.util.hex_to_binary import hex_to_binary
 from backend.config import MINE_RATE
 
+genesis_timestamp = time.time_ns()
 GENESIS_DATA = {
-    'timestamp' : 1,
-    'previous_hash' : 'genesis_previous_hash',
-    'hash' : '0000000000000000000000000000000000000000000000000000000000000000',
+    'timestamp' : genesis_timestamp,
+    'previous_hash' : '0000000000000000000000000000000000000000000000000000000000000000',
+    'hash' : crypto_hash(genesis_timestamp, '0000000000000000000000000000000000000000000000000000000000000000', [], 0, 3),
     'data' : [],
     'difficulty' : 3,
-    'nonce': 'genesis_nonce'
+    'nonce': 0
 }
 
 
@@ -32,6 +33,9 @@ class Block:
             f'difficulty: {self.difficulty}, '
             f'nonce: {self.nonce})'
         )
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
     @staticmethod
     def mine_block(previous_block, data):
