@@ -23,6 +23,10 @@ class Blockchain:
 
         self.chain = chain
 
+    def to_json(self):
+        return list(map(lambda block:block.to_json(),self.chain))
+
+
     @staticmethod
     def is_valid_chain(chain):
 
