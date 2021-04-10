@@ -3,11 +3,10 @@ from backend.util.crypto_hash import crypto_hash
 from backend.util.hex_to_binary import hex_to_binary
 from backend.config import MINE_RATE
 
-genesis_timestamp = time.time_ns()
 GENESIS_DATA = {
-    'timestamp' : genesis_timestamp,
+    'timestamp' : 1,
     'previous_hash' : '0000000000000000000000000000000000000000000000000000000000000000',
-    'hash' : crypto_hash(genesis_timestamp, '0000000000000000000000000000000000000000000000000000000000000000', [], 0, 3),
+    'hash' : crypto_hash(1, '0000000000000000000000000000000000000000000000000000000000000000', [], 0, 3),
     'data' : [],
     'difficulty' : 3,
     'nonce': 0
@@ -71,6 +70,10 @@ class Block:
     @staticmethod
     def genesis():
         return Block(**GENESIS_DATA)
+
+    @staticmethod
+    def from_json_to_block(block_json):
+        return Block(**block_json)
 
     @staticmethod
     def is_valid_block(previous_block, block):

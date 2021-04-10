@@ -3,6 +3,7 @@ import time
 from pubnub.pubnub import PubNub
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.callbacks import SubscribeCallback
+from backend.blockchain.block import Block
 
 pnconfig = PNConfiguration()
 pnconfig.subscribe_key = 'sub-c-b4cd8a40-95e9-11eb-9adf-f2e9c1644994'
@@ -17,17 +18,31 @@ CHANNELS = {
 
 
 class Listener(SubscribeCallback):
+    def __init__(self, blockchain):
+        self.blockchain = blockchain
+
     def message(self, pubnub, message_object):
         print(f'\n-- Channel: {message_object.channel} | Message: {message_object.message}')
 
+        if message_object.channel == CHANNELS['BLOCK']:
+            block = Block.from_json_to_block(message_object.message)
+            potential_chain = self.blockchain.chain[:]
+            potential_chain.append(block)
+            try:
+                self.blockchain.replace_chain(potential_chain)
+                print(f'\n Successfully replace the local chain')
+            except Exception as e:
+                print(f'\n Failed to replace chain: {e}')
 
-pubnub.add_listener(Listener())
+
+# pubnub.add_listener(Listener(blockchain))
+
 
 class PubSub():
-    def __init__(self):
+    def __init__(self, blockchain):
         self.pubnub = PubNub(pnconfig)
         self.pubnub.subscribe().channels(CHANNELS.values()).execute()
-        self.pubnub.add_listener(Listener())
+        self.pubnub.add_listener(Listener(blockchain))
 
     def publish(self, channel, meessage):
         """
