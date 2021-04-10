@@ -72,7 +72,7 @@ class Block:
         return Block(**GENESIS_DATA)
 
     @staticmethod
-    def from_json_to_block(block_json):
+    def from_json(block_json):
         return Block(**block_json)
 
     @staticmethod

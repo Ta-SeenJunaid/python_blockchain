@@ -25,7 +25,7 @@ class Listener(SubscribeCallback):
         print(f'\n-- Channel: {message_object.channel} | Message: {message_object.message}')
 
         if message_object.channel == CHANNELS['BLOCK']:
-            block = Block.from_json_to_block(message_object.message)
+            block = Block.from_json(message_object.message)
             potential_chain = self.blockchain.chain[:]
             potential_chain.append(block)
             try:
@@ -33,9 +33,6 @@ class Listener(SubscribeCallback):
                 print(f'\n Successfully replace the local chain')
             except Exception as e:
                 print(f'\n Failed to replace chain: {e}')
-
-
-# pubnub.add_listener(Listener(blockchain))
 
 
 class PubSub():
