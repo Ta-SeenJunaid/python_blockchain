@@ -1,8 +1,11 @@
+import json
 import uuid
 
 from backend.config import STARTING_BALANCE
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+from cryptography.exceptions import InvalidSignature
 
 
 class Wallet:
@@ -14,10 +17,40 @@ class Wallet:
             default_backend())
         self.public_key = self.private_key.public_key()
 
+    def sign(self, data):
+        return self.private_key.sign(
+            json.dumps(data).encode('utf-8'),
+            ec.ECDSA(hashes.SHA256()))
+
+    @staticmethod
+    def verify(public_key, data, signature):
+        try:
+            public_key.verify(signature,
+                              json.dumps(data).encode('utf-8'),
+                              ec.ECDSA(hashes.SHA256()))
+            return True
+        except InvalidSignature:
+            return False
+
+
 
 def main():
     wallet = Wallet()
     print(f'wallet.__dict__ : {wallet.__dict__}')
+
+    data = {'foo':'boo'}
+    tempered_data = 'tempered_block'
+    signature = wallet.sign(data)
+    print(f'signature : {signature}')
+
+    signature_should_be_verified = Wallet.verify(wallet.public_key, data, signature)
+    print(f'signature_should_be_verified: {signature_should_be_verified}')
+
+    signature_should_be_invalid = Wallet.verify(Wallet().public_key, data, signature)
+    print(f'signature_should_be_invalid: {signature_should_be_invalid}')
+
+    signature_should_be_invalid = Wallet.verify(Wallet().public_key, tempered_data, signature)
+    print(f'signature_should_be_invalid: {signature_should_be_invalid}')
 
 if __name__ == '__main__':
     main()
