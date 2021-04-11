@@ -14,6 +14,19 @@ class Transaction:
                                          amount)
         self.input = self.create_input(sender_wallet, self.output)
 
+    def update(self, sender_wallet, recipient, amount):
+
+        if amount > self.output[sender_wallet.address]:
+            raise Exception('Amount exceeds balance')
+
+        if recipient in self.output:
+            self.output[recipient] += amount
+        else:
+            self.output[recipient] = amount
+
+        self.output[sender_wallet.address] -= amount
+        self.input = self.create_input(sender_wallet, self.output)
+
     @staticmethod
     def create_output(sender_wallet, recipient, amount):
 
@@ -39,7 +52,14 @@ class Transaction:
 
 
 def main():
-    transaction = Transaction(Wallet(), 'recipient', 25)
+    wallet = Wallet()
+    transaction = Transaction(wallet, 'recipient', 25)
+    print(f'transaction.__dict__ : {transaction.__dict__}')
+
+    transaction.update(wallet, 'recipient', 50)
+    print(f'transaction.__dict__ : {transaction.__dict__}')
+
+    transaction.update(wallet, 'recipient_2', 50)
     print(f'transaction.__dict__ : {transaction.__dict__}')
 
 
