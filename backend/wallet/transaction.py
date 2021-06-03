@@ -40,7 +40,7 @@ class Transaction:
 
     @staticmethod
     def from_json(transaction_json):
-        pass
+        return Transaction(**transaction_json)
 
     @staticmethod
     def create_output(sender_wallet, recipient, amount):
@@ -84,6 +84,11 @@ def main():
     wallet = Wallet()
     transaction = Transaction(wallet, 'recipient', 25)
     print(f'transaction.__dict__ : {transaction.__dict__}')
+
+    transaction_json = transaction.to_json()
+    restored_transaction = Transaction.from_json(transaction_json)
+    print(f'restored_transaction.__dict__ : {restored_transaction.__dict__}')
+
 
     transaction.update(wallet, 'recipient', 50)
     print(f'transaction.__dict__ : {transaction.__dict__}')
