@@ -13,13 +13,15 @@ pubnub = PubNub(pnconfig)
 
 CHANNELS = {
     'TEST': 'TEST',
-    'BLOCK': 'BLOCK'
+    'BLOCK': 'BLOCK',
+    'TRANSACTION': 'TRANSACTION'
 }
 
 
 class Listener(SubscribeCallback):
-    def __init__(self, blockchain):
+    def __init__(self, blockchain, transaction_pool):
         self.blockchain = blockchain
+        self.transaction_pool = transaction_pool
 
     def message(self, pubnub, message_object):
         print(f'\n-- Channel: {message_object.channel} | Message: {message_object.message}')
@@ -33,13 +35,16 @@ class Listener(SubscribeCallback):
                 print(f'\n Successfully replace the local chain')
             except Exception as e:
                 print(f'\n Failed to replace chain: {e}')
+        elif message_object.channel == CHANNELS['TRANSACTION']:
+            pass
+
 
 
 class PubSub():
-    def __init__(self, blockchain):
+    def __init__(self, blockchain, transaction_pool):
         self.pubnub = PubNub(pnconfig)
         self.pubnub.subscribe().channels(CHANNELS.values()).execute()
-        self.pubnub.add_listener(Listener(blockchain))
+        self.pubnub.add_listener(Listener(blockchain, transaction_pool))
 
     def publish(self, channel, meessage):
         """
@@ -49,6 +54,9 @@ class PubSub():
 
     def broadcast_block(self, block):
         self.publish(CHANNELS['BLOCK'], block.to_json())
+
+    def broadcast_transaction(self, transaction):
+        self.publish(CHANNELS['TRANSACTION'], transaction.to_json())
 
 
 def main():

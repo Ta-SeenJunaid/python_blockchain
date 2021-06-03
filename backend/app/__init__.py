@@ -5,14 +5,15 @@ import random
 from flask import Flask, jsonify, request
 from backend.wallet.wallet import Wallet
 from backend.wallet.transaction import Transaction
-
+from backend.wallet.transaction_pool import TransactionPool
 from backend.blockchain.blockchain import Blockchain
 from backend.pubsub import PubSub
 
 app = Flask(__name__)
 blockchain = Blockchain()
 wallet = Wallet()
-pubsub = PubSub(blockchain)
+transaction_pool = TransactionPool()
+pubsub = PubSub(blockchain, transaction_pool)
 
 
 @app.route('/')
