@@ -9,3 +9,9 @@ class TransactionPool:
         for transaction in self.transaction_map.values():
             if transaction.input['address'] == address:
                 return transaction
+
+    def transaction_data(self):
+        return list(map(
+            lambda transaction: transaction.to_json(),
+            self.transaction_map.values()
+        ))
