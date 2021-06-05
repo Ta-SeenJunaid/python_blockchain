@@ -51,6 +51,19 @@ class Wallet:
         except InvalidSignature:
             return False
 
+    @staticmethod
+    def calculate_balance(blockchain, address):
+        balance = STARTING_BALANCE
+        for block in blockchain.chain:
+            for transaction in block.data:
+                if transaction['input']['address'] == address:
+                    balance = transaction['output'][address]
+                elif address in transaction['output']:
+                    balance += transaction['output'][address]
+
+        return balance
+
+
 
 def main():
     wallet = Wallet()
