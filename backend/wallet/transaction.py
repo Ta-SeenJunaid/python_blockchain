@@ -19,8 +19,8 @@ class Transaction:
 
         self.id = id or str(uuid.uuid4())[0:8]
         self.output = output or self.create_output(sender_wallet,
-                                         recipient,
-                                         amount)
+                                                   recipient,
+                                                   amount)
         self.input = input or self.create_input(sender_wallet, self.output)
 
     def update(self, sender_wallet, recipient, amount):
@@ -68,15 +68,20 @@ class Transaction:
 
     @staticmethod
     def is_valid_transaction(transaction):
+        if transaction.input == MINING_REWARD_INPUT:
+            if list(transaction.output.values()) != [MINING_REWARD]:
+                raise Exception('Invalid mining reward')
+            return
+
         output_total = sum(transaction.output.values())
 
         if transaction.input['amount'] != output_total:
             raise Exception('Invalid transaction output values')
 
         if not Wallet.verify(
-            transaction.input['public_key'],
-            transaction.output,
-            transaction.input['signature']
+                transaction.input['public_key'],
+                transaction.output,
+                transaction.input['signature']
         ):
             raise Exception('Invalid signature')
 
@@ -97,7 +102,6 @@ def main():
     restored_transaction = Transaction.from_json(transaction_json)
     print(f'restored_transaction.__dict__ : {restored_transaction.__dict__}')
 
-
     transaction.update(wallet, 'recipient', 50)
     print(f'transaction.__dict__ : {transaction.__dict__}')
 
@@ -107,7 +111,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
