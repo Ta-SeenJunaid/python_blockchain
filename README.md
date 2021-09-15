@@ -34,3 +34,8 @@ Make sure to activate the virtual environment.
 ```
 export PEER=True && python3 -m backend.app
 ```
+
+**Run the frontend**
+```
+npm run start
+```
