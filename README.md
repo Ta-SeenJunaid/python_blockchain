@@ -39,3 +39,10 @@ export PEER=True && python3 -m backend.app
 ```
 npm run start
 ```
+
+**Seed the backend with data**
+
+Make sure to activate the virtual environment.
+```
+export SEED_DATA=True && python3 -m backend.app
+```
