@@ -21,7 +21,7 @@ function TransactionPool() {
     useEffect(() => {
         fetchTransactions();
 
-        const intervalID = setInterval(fetchTransactions, POOL_INTERVAL);
+        const intervalId = setInterval(fetchTransactions, POOL_INTERVAL);
 
         return () => clearInterval(intervalId);
     }, []);
